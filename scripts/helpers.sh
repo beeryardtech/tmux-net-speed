@@ -10,7 +10,7 @@ get_tmux_option() {
 	local option="$1"
 	local default_value="$2"
 	local option_value="$(tmux show-option -gqv "$option")"
-	if [ -z "$option_value" ]; then
+	if [[ -z "$option_value" ]]; then
 		echo "$default_value"
 	else
 		echo "$option_value"
@@ -33,12 +33,12 @@ get_velocity()
     local MILLION=100000
 
     local vel=$(( new_value - old_value ))
-    local velKB=$(( vel / MILLION ))
-    local velMB=$(( vel / THOUSAND ))
+    local velKB=$(( vel / THOUSAND ))
+    local velMB=$(( vel / MILLION ))
 
-    if [ $velMB != 0 ] ; then
+    if [[ $velMB != 0 ]] ; then
         echo -n "$velMB MB/s"
-    elif [ $velKB != 0 ] ; then
+    elif [[ $velKB != 0 ]] ; then
         echo -n "$velKB KB/s";
     else
         echo -n "$vel B/s";
@@ -69,6 +69,16 @@ read_file()
 
    # else all good, echo value
    echo $tmp
+}
+
+# Update values in file
+write_file()
+{
+   local path="$1"
+   local val="$2"
+
+   # TODO Add error checking
+   echo "$val" > "$path"
 }
 
 sum_speed()
