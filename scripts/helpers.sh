@@ -95,9 +95,10 @@ sum_speed()
     local val=0
     for intf in ${interfaces[@]} ; do
         line=$(cat /proc/net/dev | grep "$intf" | cut -d':' -f 2)
-        let val+=$(echo -n $line | cut -d' ' -f $column)
+        speed="$(echo -n $line | cut -d' ' -f $column)"
+        let val+=${speed:=0}
     done
-
+    
     echo $val
 }
 
