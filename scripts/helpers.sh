@@ -86,10 +86,10 @@ sum_speed()
     local column=$1
 
     # TODO Make this a parameter option. Set through tmux config
-    local interfaces=(
-        "eth0"
-        "wlan0"
-    )
+	declare -a interfaces=()
+	for interface in /sys/class/net/*; do
+		interfaces+=("$(basename $interface)");
+	done
 
     local line=""
     local val=0
