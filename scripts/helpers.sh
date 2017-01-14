@@ -86,10 +86,13 @@ write_file()
 
 get_interfaces()
 {
-    local interfaces=""
-    for interface in /sys/class/net/*; do
-        interfaces+=$(echo $(basename $interface) " ");
-    done
+    local interfaces=$(get_tmux_option @net_speed_interfaces "")
+
+    if [[ -z "$interfaces" ]] ; then
+        for interface in /sys/class/net/*; do
+            interfaces+=$(echo $(basename $interface) " ");
+        done
+    fi
 
     # Do not quote the variable. This way will handle trailing whitespace
     echo -n $interfaces
@@ -98,6 +101,7 @@ get_interfaces()
 sum_speed()
 {
     local column=$1
+
     declare -a interfaces=$(get_interfaces)
 
     local line=""
