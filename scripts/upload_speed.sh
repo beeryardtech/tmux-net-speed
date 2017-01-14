@@ -18,8 +18,11 @@ main()
     local new_val=$(sum_upload_speed)
 
     write_file $file $new_val
+    local vel=$(get_velocity $new_val $old_val)
 
-    get_velocity $new_val $old_val
+    ## Format output
+    local format=$(get_tmux_option @upload_speed_format "%s")
+    printf "$format" "$vel"
 }
 main
 

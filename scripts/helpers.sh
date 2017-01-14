@@ -7,20 +7,21 @@ DOWNLOAD_FILE="/tmp/tmux_net_speed.download"
 UPLOAD_FILE="/tmp/tmux_net_speed.upload"
 
 get_tmux_option() {
-	local option="$1"
-	local default_value="$2"
-	local option_value="$(tmux show-option -gqv "$option")"
-	if [[ -z "$option_value" ]]; then
-		echo "$default_value"
-	else
-		echo "$option_value"
-	fi
+    local option=$1
+    local default_value=$2
+    local option_value="$(tmux show-option -gqv "$option")"
+
+    if [[ -z "$option_value" ]]; then
+        echo "$default_value"
+    else
+        echo "$option_value"
+    fi
 }
 
 set_tmux_option() {
-	local option=$1
-	local value=$2
-	tmux set-option -gq "$option" "$value"
+    local option=$1
+    local value=$2
+    tmux set-option -gq "$option" "$value"
 }
 
 get_velocity()
@@ -29,17 +30,17 @@ get_velocity()
     local old_value=$2
 
     # Consts
-    local THOUSAND=1000
-    local MILLION=100000
+    local THOUSAND=1024
+    local MILLION=1048576
 
     local vel=$(( new_value - old_value ))
-    local velKB=$(( vel / THOUSAND ))
-    local velMB=$(( vel / MILLION ))
+    local vel_kb=$(( vel / THOUSAND ))
+    local vel_mb=$(( vel / MILLION ))
 
-    if [[ $velMB != 0 ]] ; then
-        echo -n "$velMB MB/s"
-    elif [[ $velKB != 0 ]] ; then
-        echo -n "$velKB KB/s";
+    if [[ $vel_mb != 0 ]] ; then
+        echo -n "$vel_mb MB/s"
+    elif [[ $vel_kb != 0 ]] ; then
+        echo -n "$vel_kb KB/s";
     else
         echo -n "$vel B/s";
     fi
@@ -49,69 +50,76 @@ get_velocity()
 # is empty, or not readable, starts back at 0
 read_file()
 {
-   local path="$1"
-   local val=0
+    local path="$1"
+    local fallback_val=0
 
-   if [[ ! -f "$path" ]] ; then
-       echo $val
-       return
-   elif [[ ! -r "$path" ]]; then
-       echo $val
-       return
-   fi
+    # File exists and is readdable?
+    if [[ ! -f "$path" ]] ; then
+        echo $fallback_val
+        return 1
+    elif [[ ! -r "$path" ]]; then
+        echo $fallback_val
+        return 1
+    fi
 
-   # Ok, file exists and is readdable. Check contents
-   tmp=$(< "$path")
-   if [[ "x${tmp}" == "x" ]] ; then
-       echo $val
-       return
-   fi
 
-   # else all good, echo value
-   echo $tmp
+    # Does the file have content?
+    tmp=$(< "$path")
+    if [[ "x${tmp}" == "x" ]] ; then
+        echo $fallback_val
+        return 1
+    fi
+
+    # Now return known value
+    echo $tmp
 }
 
 # Update values in file
 write_file()
 {
-   local path="$1"
-   local val="$2"
+    local path="$1"
+    local val="$2"
 
-   # TODO Add error checking
-   echo "$val" > "$path"
+    # TODO Add error checking
+    echo "$val" > "$path"
+}
+
+get_interfaces()
+{
+    local interfaces=""
+    for interface in /sys/class/net/*; do
+        interfaces+=$(echo $(basename $interface) " ");
+    done
+
+    # Do not quote the variable. This way will handle trailing whitespace
+    echo -n $interfaces
 }
 
 sum_speed()
 {
     local column=$1
-
-    # TODO Make this a parameter option. Set through tmux config
-    local interfaces=(
-        "eth0"
-        "wlan0"
-    )
+    declare -a interfaces=$(get_interfaces)
 
     local line=""
     local val=0
     for intf in ${interfaces[@]} ; do
         line=$(cat /proc/net/dev | grep "$intf" | cut -d':' -f 2)
-        let val+=$(echo -n $line | cut -d' ' -f $column)
+        speed="$(echo -n $line | cut -d' ' -f $column)"
+        let val+=${speed:=0}
     done
 
     echo $val
 }
 
 is_osx() {
-	[ $(uname) == "Darwin" ]
+    [ $(uname) == "Darwin" ]
 }
 
 is_cygwin() {
-	command -v WMIC > /dev/null
+    command -v WMIC > /dev/null
 }
 
 command_exists() {
-	local command="$1"
-	type "$command" >/dev/null 2>&1
+    local command="$1"
+    type "$command" >/dev/null 2>&1
 }
-
-
