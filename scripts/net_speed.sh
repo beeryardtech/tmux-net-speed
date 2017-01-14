@@ -7,8 +7,9 @@ main()
 {
     local download=$("$CURRENT_DIR/download_speed.sh")
     local upload=$("$CURRENT_DIR/upload_speed.sh")
-    local format=$(get_tmux_option net_speed_format "D:%10s U:%10s")
 
+    ## Format output
+    local format=$(get_tmux_option @net_speed_format "D:%10s U:%10s")
     printf "$format" "$download" "$upload"
 }
 main

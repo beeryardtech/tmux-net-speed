@@ -15,7 +15,6 @@ Shows value in either MB/s, KB/s, or B/s.
 - `#{net_speed}` - Shows both the upload and download speeds.
     **Example**: "D: 123 MB/s U: 25 MB/s"
 
-NOTE: Shows value in either MB/s, KB/s, or B/s.
 ## Past Values
 Since this is a difference, the old values are stored in files in `/tmp/`. The user must be able to
 read and write to this directory.
@@ -27,9 +26,11 @@ Use a comma separated list. If not set, grabs all the interfaces listed in "/sys
 
     set -g @net_speed_inf "eth0,eth1"
 
-To change the formatter sting passed to `printf`. Default is "D:%10s U:%10s"
+To change the formatter sting passed to `printf`.
 
-    set -g @net_speed_format "Down: %100s"
+    set -g @download_speed_format "%10s"
+    set -g @upload_speed_format "%10s"
+    set -g @net_speed_format "D:%10s U:%10s"
 
 ### Installation with [Tmux Plugin Manager](https://github.com/tmux-plugins/tpm) (recommended)
 
