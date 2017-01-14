@@ -21,16 +21,22 @@ read and write to this directory.
 
 ### Set Options
 
-To change which interfaces to pull from, set the following options in your `.tmux.conf`.
-Use a comma separated list. If not set, grabs all the interfaces listed in "/sys/class/net/"
+Set the following options in your `.tmux.conf`.
 
-    set -g @net_speed_inf "eth0,eth1"
+To change which interfaces to pull from, use a space-separated list. If not set,
+grabs all the interfaces listed in "/sys/class/net/"
+
+```
+set -g @net_speed_interfaces "eth0 eth1"
+```
 
 To change the formatter sting passed to `printf`.
 
-    set -g @download_speed_format "%10s"
-    set -g @upload_speed_format "%10s"
-    set -g @net_speed_format "D:%10s U:%10s"
+```
+set -g @download_speed_format "%10s"
+set -g @upload_speed_format "%10s"
+set -g @net_speed_format "D:%10s U:%10s"
+```
 
 ### Installation with [Tmux Plugin Manager](https://github.com/tmux-plugins/tpm) (recommended)
 
