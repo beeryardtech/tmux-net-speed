@@ -21,7 +21,7 @@ main()
     local vel=$(get_velocity $new_val $old_val)
 
     ## Format output
-    local format=$(get_tmux_option @upload_speed_format "%10s")
+    local format=$(get_tmux_option @upload_speed_format "%s")
     printf "$format" "$vel"
 }
 main
