@@ -18,7 +18,6 @@ main()
     local new_val=$(sum_upload_speed)
 
     write_file $file $new_val
-
     get_velocity $new_val $old_val
 }
 main
